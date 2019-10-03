@@ -13,6 +13,8 @@ class MoviesController < ApplicationController
   def index
     if params[:sort] == "title"
       @movies = Movie.all.order(:title)
+      @title_hilite = 'hilite'
+      
     else
       @movies = Movie.all
     end
