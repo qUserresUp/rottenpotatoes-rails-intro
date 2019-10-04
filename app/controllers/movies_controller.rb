@@ -12,23 +12,39 @@ class MoviesController < ApplicationController
 
   def index
 
+
     @all_ratings = Movie.ratings
+
+    session[:ratings] ||= @all_ratings
+    session[:sort] ||= [:id]
 
     if params[:sort] == "title"
       @movies = Movie.all.order(:title)
-      @title_hilite = 'hilite'
+      @title_hilite = session[:title_hilite] = 'hilite' 
 
     elsif params[:sort] == "release_date"
       @movies = Movie.all.order(:release_date)
-      @release_date = 'hilite'
+      @release_date = session[:release_date] = 'hilite'
     else
       @movies = Movie.all
     end
 
     if params[:ratings]
       @movies = @movies.where(:rating => params[:ratings].keys)
-
+      session[:ratings] = params[:ratings].keys
     end
+
+    if params[:sort]
+        
+        session[:sort] = params[:sort]
+    end
+
+    if  params[:ratings].nil? || params[:sort].nil?
+
+        redirect_to movies_path(ratings: Hash[session[:ratings].map {|r| [r,1]}], sort: session[:sort])
+    end
+
+    
     
   end
 
